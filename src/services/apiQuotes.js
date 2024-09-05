@@ -39,4 +39,4 @@ function start() {
   });
 }
 
-start();
+/* start(); */

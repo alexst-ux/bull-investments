@@ -1,9 +1,9 @@
-import { DTLA_LON } from "../data/data_DTLA";
+/* import { DTLA_LON } from "../data/data_DTLA";
 import { IWDA_AMS } from "../data/data_IWDA_AMS";
 import { SWRD_AMS } from "../data/data_SWRD";
-import { SXR8_DEX } from "../data/data_SXR8_DEX";
 import { VUAA_LON } from "../data/data_VUAA";
 import { VUAA_DEX } from "../data/data_VUAA_DEX";
+import { SXR8_DEX } from "../data/data_SXR8_DEX"; */
 
 export const BASE_CURRENCIES = ["USD", "EUR", "PLN", "GBP"];
 
@@ -41,7 +41,7 @@ console.log(JSON.stringify(exResult));
 //----------------------------------------------------------------------------------
 
 export async function getHistoryExchData(stockData, currency) {
-  if (!stockData) stockData = SXR8_DEX;
+  if (!stockData) stockData = "" /* SXR8_DEX */;
   for (const [key, value] of Object.entries(stockData["Monthly Time Series"])) {
     const exResult = await getAllCurrencyExchange(
       key,
