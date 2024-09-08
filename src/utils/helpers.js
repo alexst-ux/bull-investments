@@ -78,7 +78,7 @@ export const getUnrealizedGain = (avrgHoldings, currentPrices, currency) => {
  * }
  * @param {String} currency value like "USD|EUR|PLN|GBP"
  * @returns {Object} structure like 
- * { "VUAA.LON": {  "avrg": 72.4863,  "count": 54 }, "SWRD.AMS": { "avrg": 30.1043,  "count": 167 }
+ * { "VUAA.LON": {  "avrg": 72.4863,  "count": 54, "stock_id": 1234}, "SWRD.AMS": { "avrg": 30.1043,  "count": 167 }
    }
  */
 export const getAveragePrices = (holdings, currency) => {
@@ -88,6 +88,7 @@ export const getAveragePrices = (holdings, currency) => {
       acc[symb] = {
         avrg: cur.start_price_currencies[currency],
         count: cur.quantity,
+        stock_id: cur.stock_id,
       };
     } else {
       let cPrice = cur.start_price_currencies[currency];
@@ -100,6 +101,7 @@ export const getAveragePrices = (holdings, currency) => {
       acc[symb] = {
         avrg: newAvrg,
         count: newCnt,
+        stock_id: cur.stock_id,
       };
     }
     return acc;

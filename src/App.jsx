@@ -19,6 +19,7 @@ import { DarkModeProvider } from "./context/DarkModeContext";
 import { CurrencyProvider } from "./context/CurrencyContext";
 import Portfolio from "./pages/Portfolio";
 import Signup from "./pages/Signup";
+import PortfolioStock from "./pages/PortfolioStock";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -59,6 +60,10 @@ function App() {
                   <Route
                     path="portfolios/:portfolioId"
                     element={<Portfolio />}
+                  />
+                  <Route
+                    path="portfolios/:portfolioId/:stockId"
+                    element={<PortfolioStock />}
                   />
                   <Route path="holdings" element={<Holdings />} />
                   <Route path="settings" element={<Settings />} />

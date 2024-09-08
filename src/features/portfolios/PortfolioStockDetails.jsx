@@ -1,15 +1,16 @@
-import styled from "styled-components";
-import Stats from "../dashboard/Stats";
+import { usePortfolio } from "./usePortfolio";
 import { useCurrency } from "../../context/CurrencyContext";
+
 import Spinner from "../../ui/Spinner";
 import { getAveragePrices } from "../../utils/helpers";
-import { usePortfolio } from "./usePortfolio";
-import Heading from "../../ui/Heading";
 import Row from "../../ui/Row";
+import Heading from "../../ui/Heading";
+import Stats from "../dashboard/Stats";
 import ButtonGroup from "../../ui/ButtonGroup";
 import Button from "../../ui/Button";
-import HoldingTable from "../holdings/HoldingTable";
-import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
+import { useNavigate, useParams } from "react-router-dom";
+import HoldingStockTable from "../holdings/HoldingStockTable";
 
 const StyledLayout = styled.div`
   display: grid;
@@ -17,7 +18,8 @@ const StyledLayout = styled.div`
   gap: 2rem;
 `;
 
-function PortfolioDetail() {
+function PortfolioStockDetails() {
+  const { portfolioId } = useParams();
   const { isLoading, portfolio } = usePortfolio();
   const { currency } = useCurrency();
   const navigate = useNavigate();
@@ -30,7 +32,9 @@ function PortfolioDetail() {
   return (
     <>
       <Row type="horizontal">
-        <Heading as="h2">{portfolio.name}</Heading>
+        <Heading as="h2">{`${portfolio.name}: ${Object.keys(avrgHoldings).at(
+          0
+        )}`}</Heading>
       </Row>
       <StyledLayout>
         <Stats
@@ -39,9 +43,12 @@ function PortfolioDetail() {
           avrgHoldings={avrgHoldings}
         />
       </StyledLayout>
-      <HoldingTable holdings={holdings} avrgHoldings={avrgHoldings} />
+      <HoldingStockTable holdings={holdings} />
       <ButtonGroup justify="flex-start">
-        <Button variation="secondary" onClick={() => navigate("/portfolios")}>
+        <Button
+          variation="secondary"
+          onClick={() => navigate(`/portfolios/${portfolioId}`)}
+        >
           Back
         </Button>
       </ButtonGroup>
@@ -49,4 +56,4 @@ function PortfolioDetail() {
   );
 }
 
-export default PortfolioDetail;
+export default PortfolioStockDetails;

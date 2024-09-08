@@ -3,6 +3,7 @@ import styled from "styled-components";
 import Table from "../../ui/Table";
 import {
   formatCurrencyExt,
+  getAveragePrices,
   getInvested,
   getPercent,
 } from "../../utils/helpers";
@@ -13,6 +14,7 @@ import Modal from "../../ui/Modal";
 import Menus from "../../ui/Menus";
 import { HiSquare2Stack } from "react-icons/hi2";
 import { useNavigate, useParams } from "react-router-dom";
+import { format } from "date-fns";
 
 const Symbol = styled.div`
   font-size: 1.6rem;
@@ -28,16 +30,16 @@ const Stacked = styled.div`
 
   & span:first-child {
     font-weight: 500;
-  }
-
-  & span:last-child {
-    /* color: var(--color-grey-500); */
     color: ${(props) =>
       props.type === "grey"
         ? "var(--color-grey-500)"
         : props.type === "green"
         ? "var(--color-green-400)"
         : "var(--color-red-700)"};
+  }
+
+  & span:last-child {
+    color: var(--color-grey-500);
     font-size: 1.3rem;
   }
 `;
@@ -47,40 +49,44 @@ const Amount = styled.div`
   font-weight: 500;
 `;
 
-function HoldingRow({ symbol, avrgHolding, holdings, stockId }) {
-  const { currency } = useCurrency();
+function HoldingStockRow({ stockId, holding }) {
   const navigate = useNavigate();
   const { portfolioId } = useParams();
+  const { currency } = useCurrency();
+  const holdings = new Array(holding);
+  const avrgHolding = getAveragePrices(holdings, currency);
   const { isLoading, unrealizedGain, currentPrices } = useUnrealizedGain(
     avrgHolding,
     currency
   );
 
   function handleDetails() {
-    navigate(`/portfolios/${portfolioId}/${stockId}`);
+    //navigate(`/portfolios/${portfolioId}/${stockId}`);
+    alert("Sorry, is not implemented yet");
   }
 
   if (isLoading) return <SpinnerMini />;
 
+  const symbol = holding.stock.symbol;
   const invested = getInvested(holdings, currency);
 
   return (
     <Table.Row>
       <Stacked type="grey">
-        <span>{symbol}</span>
-        <span>{`buy ${avrgHolding[symbol].count} * ${formatCurrencyExt(
+        <span>{`buy ${holding.quantity} * ${formatCurrencyExt(
           avrgHolding[symbol].avrg,
           currency
         )}`}</span>
+        <span>{format(new Date(holding.start_date), "dd-MMM-yyyy")}</span>
       </Stacked>
 
       <Stacked type={unrealizedGain >= 0 ? "green" : "red"}>
         <span>
-          {formatCurrencyExt(currentPrices[0].currency[currency], currency)}
-        </span>
-        <span>
           {formatCurrencyExt(unrealizedGain, currency)} (
           {`${getPercent(invested, unrealizedGain)}%`})
+        </span>
+        <span>
+          {formatCurrencyExt(currentPrices[0].currency[currency], currency)}
         </span>
       </Stacked>
       <div>
@@ -90,7 +96,7 @@ function HoldingRow({ symbol, avrgHolding, holdings, stockId }) {
 
             <Menus.List id={stockId}>
               <Menus.Button icon={<HiSquare2Stack />} onClick={handleDetails}>
-                Show list
+                Details
               </Menus.Button>
             </Menus.List>
           </Menus.Menu>
@@ -100,4 +106,4 @@ function HoldingRow({ symbol, avrgHolding, holdings, stockId }) {
   );
 }
 
-export default HoldingRow;
+export default HoldingStockRow;
