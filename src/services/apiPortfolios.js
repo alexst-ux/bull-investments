@@ -1,17 +1,28 @@
 import supabase from "./supabase";
 
-export async function getPortfolio(id) {
-  const { data, error } = await supabase
+export async function getPortfolio({ portfolioId, stockId }) {
+  let query = supabase
     .from("portfolio")
     .select(
-      "id, name, description, holdings(stock_id, quantity, start_price_currencies, stock(symbol))"
+      "id, name, description, holdings(stock_id, quantity, start_price_currencies, start_date, id, stock(symbol))"
     )
-    .eq("id", id)
-    .single();
+    .eq("id", portfolioId);
+
+  if (stockId) {
+    query.eq("holdings.stock_id", stockId);
+  }
+
+  const { data, error } = await query.single();
 
   if (error) {
     console.error(error);
     throw new Error("Portfolio not found");
+  }
+
+  if (stockId && data) {
+    data.holdings.sort(
+      (a, b) => new Date(b.start_date) - new Date(a.start_date)
+    );
   }
 
   return data;
