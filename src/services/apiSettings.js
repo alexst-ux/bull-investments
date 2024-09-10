@@ -1,6 +1,7 @@
-import supabase from "./supabase";
+import supabasePromise from "./supabase";
 
 export async function getSettings() {
+  const supabase = await supabasePromise;
   const { data, error } = await supabase.from("settings").select("*").single();
 
   if (error) {
@@ -12,6 +13,7 @@ export async function getSettings() {
 
 // We expect a newSetting object that looks like {setting: newValue}
 export async function updateSetting(newSetting) {
+  const supabase = await supabasePromise;
   const { data, error } = await supabase
     .from("settings")
     .update(newSetting)

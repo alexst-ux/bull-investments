@@ -1,7 +1,8 @@
-import supabase from "./supabase";
+import supabasePromise from "./supabase";
 import { getAllCurrencyExchange } from "./apiCurrencyExchange";
 
 export async function getActiveHoldings() {
+  const supabase = await supabasePromise;
   let query = supabase
     .from("holdings")
     .select("id, quantity, start_date, start_price_currencies, stock(symbol)")
@@ -37,6 +38,7 @@ export async function getCurrentPrices(avrgHoldings) {
 
   const avrgDataKeys = Object.keys(avrgHoldings);
 
+  const supabase = await supabasePromise;
   let query = supabase
     .from("stock")
     .select("symbol, currency, last_data")
@@ -90,6 +92,7 @@ export async function createEditHolding(holding, id) {
     };
   }
 
+  const supabase = await supabasePromise;
   let query = supabase.from("holdings");
 
   // 1) Create a Holding

@@ -1,6 +1,7 @@
-import supabase from "./supabase";
+import supabasePromise from "./supabase";
 
 export async function getPortfolio({ portfolioId, stockId }) {
+  const supabase = await supabasePromise;
   let query = supabase
     .from("portfolio")
     .select(
@@ -30,7 +31,7 @@ export async function getPortfolio({ portfolioId, stockId }) {
 
 export async function getPortfolios() {
   //const { data, error } = await supabase.from("portfolio").select("id, name");
-
+  const supabase = await supabasePromise;
   const { data, error } = await supabase
     .from("portfolio")
     .select("id, name, stocks_cnt:holdings(quantity.sum())");
@@ -47,6 +48,7 @@ export async function getPortfolios() {
 }
 
 export async function getPortfoliosExt() {
+  const supabase = await supabasePromise;
   const { data, error } = await supabase
     .from("portfolio")
     .select(
@@ -65,6 +67,7 @@ export async function getPortfoliosExt() {
 }
 
 export async function createEditPortfolio(newPortfolio, userId, id) {
+  const supabase = await supabasePromise;
   let query = supabase.from("portfolio");
   if (!id) {
     query = query.insert([{ ...newPortfolio, user_id: userId }]);
@@ -83,6 +86,7 @@ export async function createEditPortfolio(newPortfolio, userId, id) {
 }
 
 export async function deletePortfolio(id) {
+  const supabase = await supabasePromise;
   const { data, error } = await supabase
     .from("portfolio")
     .delete()

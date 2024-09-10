@@ -1,6 +1,7 @@
-import supabase, { supabaseUrl } from "./supabase";
+import supabasePromise from "./supabase";
 
 export async function login({ email, password }) {
+  const supabase = await supabasePromise;
   let { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
@@ -16,6 +17,7 @@ export async function login({ email, password }) {
 }
 
 export async function getCurrentUser() {
+  const supabase = await supabasePromise;
   const { data: session } = await supabase.auth.getSession();
   if (!session) return null;
 
@@ -31,6 +33,7 @@ export async function getCurrentUser() {
 }
 
 export async function logout() {
+  const supabase = await supabasePromise;
   const { error } = await supabase.auth.signOut();
   if (error) {
     throw new Error("Error logout", {
@@ -49,6 +52,7 @@ export async function updateCurrentUser({ password, fullName, avatar }) {
     updateData = { data: { fullName } };
   }
 
+  const supabase = await supabasePromise;
   const { data, error } = await supabase.auth.updateUser(updateData);
 
   if (error) {
@@ -76,7 +80,9 @@ export async function updateCurrentUser({ password, fullName, avatar }) {
   const { data: updatedUser, error: errorUpd } = await supabase.auth.updateUser(
     {
       data: {
-        avatar: `${supabaseUrl}/storage/v1/object/public/avatars/${fileName}`,
+        avatar: `${
+          import.meta.env.VITE_SUPABASE_URL
+        }/storage/v1/object/public/avatars/${fileName}`,
       },
     }
   );
