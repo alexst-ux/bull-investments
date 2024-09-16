@@ -18,9 +18,26 @@ import { getCurrSymb, getStockSymbols } from "../../utils/helpers";
 import toast from "react-hot-toast";
 import { useDarkMode } from "../../context/DarkModeContext";
 import { chartDarkMode, chartLightMode } from "../../styles/GlobalStyles";
+import ProfitToggle from "../../ui/ProfitToggle";
+import { useState } from "react";
+
+const StyledHeader = styled.header`
+  background-color: var(--color-grey-0);
+
+  display: flex;
+  gap: 2.4rem;
+  align-items: center;
+  /* justify-content: flex-end; // move all to the end of line */
+  justify-content: space-between;
+`;
+
+const StyledHeaderLeft = styled.div`
+  display: inline-flex;
+`;
 
 const StyledHoldingsChart = styled(DashboardBox)`
   grid-column: 1 / -1;
+  padding: 0.4rem 1.2rem;
 
   /* Hack to change grid line colors */
   & .recharts-cartesian-grid-horizontal line,
@@ -31,6 +48,7 @@ const StyledHoldingsChart = styled(DashboardBox)`
 
 function HoldingsChart({ holdings, currency }) {
   const { isDarkMode } = useDarkMode();
+  const [profitType, setProfitType] = useState("money");
 
   const {
     isLoading,
@@ -55,7 +73,12 @@ function HoldingsChart({ holdings, currency }) {
 
   return (
     <StyledHoldingsChart>
-      <Heading as="h3">Unrealized profit for all time</Heading>
+      <StyledHeader>
+        <Heading as="h3">Unrealized profit for all time</Heading>
+        <StyledHeaderLeft>
+          <ProfitToggle profitType={profitType} handleClick={setProfitType} />
+        </StyledHeaderLeft>
+      </StyledHeader>
       <ResponsiveContainer height={300} width="100%">
         <AreaChart data={data}>
           <XAxis
@@ -71,24 +94,28 @@ function HoldingsChart({ holdings, currency }) {
           <Tooltip contentStyle={{ backgroundColor: colors.background }} />
 
           <Area
-            dataKey="totalUSD"
+            dataKey={profitType === "money" ? "totalUSD" : "totalPercentUSD"}
             type="monotone"
             stroke={colors.profitUSD.stroke}
             strokeWidth={2}
             fill={colors.profitUSD.fill}
             name="profit"
-            unit="$"
+            unit={profitType === "money" ? "$" : "%"}
           />
 
           {currency != "USD" && (
             <Area
-              dataKey="totalCURRENCY"
+              dataKey={
+                profitType === "money"
+                  ? "totalCURRENCY"
+                  : "totalPercentCURRENCY"
+              }
               type="monotone"
               stroke={colors.profitCurr.stroke}
               strokeWidth={2}
               fill={colors.profitCurr.fill}
               name="profit"
-              unit={getCurrSymb(currency)}
+              unit={profitType === "money" ? getCurrSymb(currency) : "%"}
             />
           )}
         </AreaChart>

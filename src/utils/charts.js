@@ -62,7 +62,11 @@ export function getHoldingsMonthChart(holdings, stockData, currency) {
     });
 
     let totalUSD = 0,
-      totalCURRENCY = 0;
+      totalCURRENCY = 0,
+      avrgUSD = 0,
+      closedUSD = 0,
+      closedCURRENCY = 0,
+      avrgCURRENCY = 0;
 
     holdingAccumMap.forEach((value, key) => {
       // key like "VUAA.LON" , value is {avrgUsd:111, avrgCurrency:222, quantity:333 }
@@ -70,11 +74,18 @@ export function getHoldingsMonthChart(holdings, stockData, currency) {
         format(date, "yyyy-MMM")
       );
       try {
+        closedUSD += monthPrice.close_prices["USD"] * value.quantity;
+        avrgUSD += value.avrgUsd * value.quantity;
+
+        closedCURRENCY += monthPrice.close_prices[currency] * value.quantity;
+        avrgCURRENCY += value.avrgCurrency * value.quantity;
+        /*
         totalUSD +=
           (monthPrice.close_prices["USD"] - value.avrgUsd) * value.quantity;
         totalCURRENCY +=
           (monthPrice.close_prices[currency] - value.avrgCurrency) *
           value.quantity;
+        */
       } catch (e) {
         console.log(
           e.message,
@@ -86,13 +97,19 @@ export function getHoldingsMonthChart(holdings, stockData, currency) {
       }
     });
 
-    totalUSD = parseFloat(totalUSD.toFixed(2));
-    totalCURRENCY = parseFloat(totalCURRENCY.toFixed(2));
+    totalUSD = parseFloat((closedUSD - avrgUSD).toFixed(2));
+    totalCURRENCY = parseFloat((closedCURRENCY - avrgCURRENCY).toFixed(2));
 
     return {
       label: format(date, "yyyy-MMM"),
       totalUSD,
       totalCURRENCY,
+      totalPercentUSD: parseFloat(
+        (((closedUSD - avrgUSD) * 100) / avrgUSD).toFixed(2)
+      ),
+      totalPercentCURRENCY: parseFloat(
+        (((closedCURRENCY - avrgCURRENCY) * 100) / avrgCURRENCY).toFixed(2)
+      ),
     };
   });
 
