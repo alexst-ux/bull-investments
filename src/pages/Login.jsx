@@ -18,7 +18,7 @@ function Login() {
     <LoginLayout>
       <Logo />
       <Heading as="h1" $textAlign="center">
-        Log in myInvest account
+        Sign In invest-track account
       </Heading>
       <LoginForm />
     </LoginLayout>
