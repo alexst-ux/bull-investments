@@ -133,7 +133,6 @@ export const getInvestedMonths = (holdings, currency) => {
     const lObj = acc.find((ar) => ar.month === frmMonth);
     const lSum = el.quantity * el.start_price_currencies[currency];
     if (lObj) {
-      console.log(lObj.sum, lSum);
       lObj.sum = getFixedFloat(lObj.sum + lSum, 2);
     } else {
       acc.push({
