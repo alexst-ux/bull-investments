@@ -48,7 +48,7 @@ const StyledHoldingsChart = styled(DashboardBox)`
 
 function HoldingsChart({ holdings, currency }) {
   const { isDarkMode } = useDarkMode();
-  const [profitType, setProfitType] = useState("money");
+  const [profitType, setProfitType] = useState("%");
 
   const {
     isLoading,
