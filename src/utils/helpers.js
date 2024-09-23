@@ -73,36 +73,31 @@ export const getUnrealizedGain = (avrgHoldings, currentPrices, currency) => {
  * }
  * @param {String} currency value like "USD|EUR|PLN|GBP"
  * @returns {Object} structure like 
- * { "VUAA.LON": {  "avrg": 72.4863,  "count": 54, "stock_id": 1234}, "SWRD.AMS": { "avrg": 30.1043,  "count": 167 }
+ * { "VUAA.LON": {  "avrg": 72.4863,  "count": 54, "stock_id": 1234}, "SWRD.AMS": { "avrg": 30.1043,  "count": 167, "stock_id": 5678 }
    }
  */
 export const getAveragePrices = (holdings, currency) => {
-  const result = holdings.reduce((acc, cur) => {
-    let symb = cur.stock.symbol;
-    if (!acc[symb]) {
-      acc[symb] = {
-        avrg: cur.start_price_currencies[currency],
-        count: cur.quantity,
-        stock_id: cur.stock_id,
-      };
-    } else {
-      let cPrice = cur.start_price_currencies[currency];
-      let accPrice = acc[symb].avrg;
-      let accCnt = acc[symb].count;
-      let newCnt = acc[symb].count + cur.quantity;
-      let newAvrg = parseFloat(
-        ((cPrice * cur.quantity + accPrice * accCnt) / newCnt).toFixed(4)
-      );
-      acc[symb] = {
-        avrg: newAvrg,
-        count: newCnt,
-        stock_id: cur.stock_id,
-      };
-    }
-    return acc;
-  }, {});
+  return holdings.reduce(
+    (acc, { stock, quantity, start_price_currencies, stock_id }) => {
+      const { symbol } = stock;
+      const cPrice = start_price_currencies[currency];
 
-  return result;
+      if (!acc[symbol]) {
+        acc[symbol] = { avrg: cPrice, count: quantity, stock_id };
+      } else {
+        const { avrg: accPrice, count: accCnt } = acc[symbol];
+        const newCnt = accCnt + quantity;
+        const newAvrg = +(
+          (cPrice * quantity + accPrice * accCnt) /
+          newCnt
+        ).toFixed(4);
+        acc[symbol] = { avrg: newAvrg, count: newCnt, stock_id };
+      }
+
+      return acc;
+    },
+    {}
+  );
   /* result like
     {
       'VUAA.LON': { avrg: 73.625, count: 54 },

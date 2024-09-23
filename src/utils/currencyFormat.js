@@ -8,7 +8,6 @@ class CurrencyFormat {
   #formatCurrency = new Map();
 
   constructor({ currencies = ["USD", "EUR", "GBP", "PLN", "ILS"] }) {
-    console.log("constructor CurrencyFormat");
     currencies.forEach(this.addCurrency);
   }
 
