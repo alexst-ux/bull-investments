@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import styled, { css } from "styled-components";
-import { BASE_CURRENCIES } from "../services/apiCurrencyExchange";
+import { BASE_CURRENCIES } from "../utils/currencyFormat";
 import { useCurrency } from "../context/CurrencyContext";
 
 const StyledFilter = styled.div`

@@ -5,7 +5,7 @@ import { VUAA_LON } from "../data/data_VUAA";
 import { VUAA_DEX } from "../data/data_VUAA_DEX";
 import { SXR8_DEX } from "../data/data_SXR8_DEX"; */
 
-export const BASE_CURRENCIES = ["USD", "EUR", "PLN", "GBP"];
+import { BASE_CURRENCIES } from "../utils/currencyFormat";
 
 export async function getAllCurrencyExchange(date, price, baseCurrency) {
   const fetchURLPromises = BASE_CURRENCIES.filter(

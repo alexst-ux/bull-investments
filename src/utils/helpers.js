@@ -1,5 +1,6 @@
 import { format, formatDistance, parseISO } from "date-fns";
 import { differenceInDays } from "date-fns";
+import currencyFormat from "./currencyFormat";
 
 // We want to make this function work for both Date objects and strings (which come from Supabase)
 export const subtractDates = (dateStr1, dateStr2) =>
@@ -30,15 +31,9 @@ export const formatCurrency = (value) =>
   );
 
 export const formatCurrencyExt = (value, currencyIn) =>
-  new Intl.NumberFormat("en", {
-    style: "currency",
-    currency: currencyIn,
-  }).format(value);
+  currencyFormat.format(value, currencyIn);
 
-export const getCurrSymb = (currency) =>
-  new Intl.NumberFormat("de-DE", { style: "currency", currency })
-    .formatToParts(1)
-    .find((x) => x.type === "currency").value;
+export const getCurrSymb = (currency) => currencyFormat.getSymbol(currency);
 
 export const getFixedFloat = (num, fraction) =>
   parseFloat(num.toFixed(fraction));
