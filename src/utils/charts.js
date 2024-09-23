@@ -1,25 +1,28 @@
 import { eachMonthOfInterval, format, isSameMonth } from "date-fns";
 
-/* return Map with Symbol keys and values as Map of keys "yyyy-MM" and value close_prices: {EUR: 20, GBP: 17, PLN: 88, USD: 22}  */
-function getStockDataMapMonth(stockData) {
-  /*symbol: "VUAA.LON",
+/**
+ * 
+ * @param {JSON} stockData is array of stocks, etc {
+ *  symbol: "VUAA.LON",
     currency: "USD",
     monthly_data: {
-      "2019-06-28": { */
-  const stockDataMapMonth = new Map();
-
-  stockData.map((sd) => {
-    const monthMap = new Map();
-    for (const [key, value] of Object.entries(sd["monthly_data"])) {
-      monthMap.set(format(new Date(key), "yyyy-MMM"), {
-        close_prices: value.close_prices,
-      });
+      "2019-06-28": { ...}
+      }
     }
-    stockDataMapMonth.set(sd.symbol, monthMap);
-    return null;
-  });
-
-  return stockDataMapMonth;
+ * @returns Map with Symbol as key and values as Map of keys "yyyy-MM" and value close_prices: {EUR: 20, GBP: 17, PLN: 88, USD: 22}
+ */
+function getStockDataMapMonth(stockData) {
+  return new Map(
+    stockData.map((sd) => [
+      sd.symbol,
+      new Map(
+        Object.entries(sd.monthly_data).map(([key, value]) => [
+          format(new Date(key), "yyyy-MMM"),
+          { close_prices: value.close_prices },
+        ])
+      ),
+    ])
+  );
 }
 
 /*
@@ -39,7 +42,7 @@ export function getHoldingsMonthChart(holdings, stockData, currency) {
       isSameMonth(date, new Date(hom.start_date))
     );
 
-    holdOnMonth.map((hom2) => {
+    holdOnMonth.forEach((hom2) => {
       const acc = holdingAccumMap.get(hom2.stock.symbol) || {};
       if (!acc.quantity) {
         acc.avrgUsd = hom2.start_price_currencies.USD;
