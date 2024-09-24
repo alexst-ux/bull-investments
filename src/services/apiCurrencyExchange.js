@@ -7,32 +7,45 @@ import { SXR8_DEX } from "../data/data_SXR8_DEX"; */
 
 import { BASE_CURRENCIES } from "../utils/currencyFormat";
 
+/**
+ * 
+ * @param {string} date as a string YYYY-MM-DD, as "2024-01-31"
+ * @param {number} price 
+ * @param {string} baseCurrency 
+ * @returns Object with currency exchange data like {
+                "EUR": 97.414,
+                "USD": 108.31,
+                "PLN": 416.44,
+                "GBP": 81.36
+            }
+ */
 export async function getAllCurrencyExchange(date, price, baseCurrency) {
-  const fetchURLPromises = BASE_CURRENCIES.filter(
+  const targetCurrencies = BASE_CURRENCIES.filter(
     (val) => val !== baseCurrency
-  ).map((cur) =>
-    fetch(
-      `https://api.frankfurter.app/${date}?from=${baseCurrency}&to=${cur}&amount=${price}`
-    )
-  );
+  ).join(",");
 
-  const result = await Promise.all(fetchURLPromises)
-    .then((responses) =>
-      Promise.all(responses.map((response) => response.json()))
-    )
-    .then((data) => {
-      return data.reduce((acc, cur) => {
-        acc[cur.base] = cur.amount;
-        acc[Object.keys(cur.rates).at(0)] =
-          cur.rates[Object.keys(cur.rates).at(0)];
-        return acc;
-      }, {});
-    })
-    .catch((error) => {
-      console.error("Error getAllCurrencyExchange data:", error);
-    });
+  const url = `https://api.frankfurter.app/${date}?from=${baseCurrency}&to=${targetCurrencies}&amount=${price}`;
 
-  return result;
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      console.error(`HTTP error! status: ${response.status}`);
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+
+    const { amount, rates } = data;
+    const result = { [baseCurrency]: amount };
+
+    for (const [currency, rate] of Object.entries(rates)) {
+      result[currency] = rate;
+    }
+
+    return result;
+  } catch (error) {
+    console.error("Error getAllCurrencyExchange data:", error);
+    throw error; // Re-throw the error for the caller to handle
+  }
 }
 /*
 const exResult = await getAllCurrencyExchange("2024-08-31", 34.715, "EUR");
