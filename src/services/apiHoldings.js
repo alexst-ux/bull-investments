@@ -50,6 +50,25 @@ export async function getCurrentPrices(avrgHoldings) {
     throw new Error("Stock(s) not found");
   }
 
+  //const start = performance.now();
+  const currencyPromises = data.map((el) =>
+    getAllCurrencyExchange(
+      el.last_data["Global Quote"]["07. latest trading day"],
+      el.last_data["Global Quote"]["05. price"],
+      el.currency
+    )
+  );
+
+  const currencyResults = await Promise.all(currencyPromises);
+  const newData = data.map((el, index) => ({
+    ...el,
+    currency: currencyResults[index],
+  }));
+  //const end = performance.now();
+  //console.log(`Execution time: ${end - start} milliseconds`);
+
+  /*
+  const start = performance.now();
   const newData = await Promise.all(
     data.map(async (el) => {
       const currencyData = await getAllCurrencyExchange(
@@ -61,6 +80,10 @@ export async function getCurrentPrices(avrgHoldings) {
       return el;
     })
   );
+  const end = performance.now();
+  console.log(`Execution time: ${end - start} milliseconds`);
+  */
+
   return newData;
 }
 
