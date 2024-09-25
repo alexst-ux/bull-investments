@@ -42,27 +42,27 @@ export function getHoldingsMonthChart(holdings, stockData, currency) {
       isSameMonth(date, new Date(hom.start_date))
     );
 
-    holdOnMonth.forEach((hom2) => {
-      const acc = holdingAccumMap.get(hom2.stock.symbol) || {};
-      if (!acc.quantity) {
-        acc.avrgUsd = hom2.start_price_currencies.USD;
-        acc.avrgCurrency = hom2.start_price_currencies[currency];
-        acc.quantity = hom2.quantity;
-      } else {
-        const newQuantity = hom2.quantity + acc.quantity;
+    holdOnMonth.forEach(
+      ({ stock: { symbol }, start_price_currencies, quantity }) => {
+        const acc = holdingAccumMap.get(symbol) || {
+          quantity: 0,
+          avrgUsd: 0,
+          avrgCurrency: 0,
+        };
+
+        const newQuantity = quantity + acc.quantity;
+        const weight = quantity / newQuantity;
+
         acc.avrgUsd =
-          (acc.avrgUsd * acc.quantity +
-            hom2.start_price_currencies.USD * hom2.quantity) /
-          newQuantity;
+          acc.avrgUsd * (1 - weight) + start_price_currencies.USD * weight;
         acc.avrgCurrency =
-          (acc.avrgCurrency * acc.quantity +
-            hom2.start_price_currencies[currency] * hom2.quantity) /
-          newQuantity;
+          acc.avrgCurrency * (1 - weight) +
+          start_price_currencies[currency] * weight;
         acc.quantity = newQuantity;
+
+        holdingAccumMap.set(symbol, acc);
       }
-      holdingAccumMap.set(hom2.stock.symbol, acc);
-      return null;
-    });
+    );
 
     let totalUSD = 0,
       totalCURRENCY = 0,
