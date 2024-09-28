@@ -66,7 +66,7 @@ function PortfolioRow({ portfolio, currency }) {
 
   if (isLoading) return <SpinnerMini />;
 
-  const editDisabled = [1, 2, 10].includes(portfolioId);
+  const editDisabled = [1, 2, 10, 22].includes(portfolioId);
 
   return (
     <Table.Row role="row">
