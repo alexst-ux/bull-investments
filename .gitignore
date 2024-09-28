@@ -30,4 +30,6 @@ data_model.txt
 readMe.txt
 src/utils/algo_tmp.js
 src/data/Uploader.jsx
+src/utils/amz_help.js
 help_sec.js
+stats.html
