@@ -1,13 +1,26 @@
 import supabasePromise from "./supabase";
 import { getAllCurrencyExchange } from "./apiCurrencyExchange";
 
-export async function getActiveHoldings() {
+export async function getActiveHoldings(arg) {
+  const { sortBy } = arg || {};
   const supabase = await supabasePromise;
   let query = supabase
     .from("holdings")
-    .select("id, quantity, start_date, start_price_currencies, stock(symbol)")
-    .is("end_date", null)
-    .order("start_date");
+    .select(
+      "id, quantity, start_date, start_price_currencies, stock_id, stock(symbol)"
+    )
+    .is("end_date", null);
+
+  // SORT DATA
+  if (sortBy) {
+    query = query.order(sortBy.field, {
+      ascending: sortBy.direction === "asc",
+    });
+  } else {
+    query = query.order("start_date", {
+      ascending: true,
+    });
+  }
 
   const { data, error } = await query;
   if (error) {
