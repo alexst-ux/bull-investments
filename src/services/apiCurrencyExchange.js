@@ -3,7 +3,8 @@ import { IWDA_AMS } from "../data/data_IWDA_AMS";
 import { SWRD_AMS } from "../data/data_SWRD";
 import { VUAA_LON } from "../data/data_VUAA";
 import { VUAA_DEX } from "../data/data_VUAA_DEX";
-import { SXR8_DEX } from "../data/data_SXR8_DEX"; */
+import { SXR8_DEX } from "../data/data_SXR8_DEX";
+import { IS04_DEX } from "../data/data_IS04_DEX"; */
 
 import { BASE_CURRENCIES } from "../utils/currencyFormat";
 
