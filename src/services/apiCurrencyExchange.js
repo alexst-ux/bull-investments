@@ -8,6 +8,8 @@ import { IS04_DEX } from "../data/data_IS04_DEX"; */
 
 import { BASE_CURRENCIES } from "../utils/currencyFormat";
 
+const CURRENCY_EXCHANGE_URL = import.meta.env.VITE_CURRENCY_EXCHANGE_URL;
+
 /**
  * 
  * @param {string} date as a string YYYY-MM-DD, as "2024-01-31"
@@ -25,7 +27,7 @@ export async function getAllCurrencyExchange(date, price, baseCurrency) {
     (val) => val !== baseCurrency
   ).join(",");
 
-  const url = `https://api.frankfurter.app/${date}?from=${baseCurrency}&to=${targetCurrencies}&amount=${price}`;
+  const url = `${CURRENCY_EXCHANGE_URL}${date}?from=${baseCurrency}&to=${targetCurrencies}&amount=${price}`;
 
   try {
     const response = await fetch(url);
