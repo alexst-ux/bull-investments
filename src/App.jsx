@@ -1,25 +1,27 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { lazy } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import isPropValid from "@emotion/is-prop-valid";
 import { Toaster } from "react-hot-toast";
 import { StyleSheetManager } from "styled-components";
-import Account from "./pages/Account";
-import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import PageNotFound from "./pages/PageNotFound";
-import Settings from "./pages/Settings";
 import GlobalStyles from "./styles/GlobalStyles";
 import AppLayout from "./ui/AppLayout";
 import ProtectedRoute from "./ui/ProtectedRoute";
-import Holdings from "./pages/Holdings";
-import Portfolios from "./pages/Portfolios";
 import { DarkModeProvider } from "./context/DarkModeContext";
 import { CurrencyProvider } from "./context/CurrencyContext";
-import Portfolio from "./pages/Portfolio";
 import Signup from "./pages/Signup";
-import PortfolioStock from "./pages/PortfolioStock";
+
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Portfolios = lazy(() => import("./pages/Portfolios"));
+const Portfolio = lazy(() => import("./pages/Portfolio"));
+const PortfolioStock = lazy(() => import("./pages/PortfolioStock"));
+const Holdings = lazy(() => import("./pages/Holdings"));
+const Settings = lazy(() => import("./pages/Settings"));
+const Account = lazy(() => import("./pages/Account"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
